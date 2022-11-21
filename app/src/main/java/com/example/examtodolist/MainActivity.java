@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -37,11 +38,16 @@ public class MainActivity extends AppCompatActivity {
         header.setText("TASKS");
         db = databaseHelper.getReadableDatabase();
 
-        taskCursor = db.rawQuery("select * from " + DatabaseHelper.TABLE, null);
-        String[] headers = new String[]{DatabaseHelper.COLUMN_TEXT, String.valueOf(DatabaseHelper.COLUMN_PERFORMED)};
-        taskAdapter = new SimpleCursorAdapter(this, android.R.layout.two_line_list_item,
-                taskCursor, headers, new int[]{android.R.id.text1, android.R.id.text2}, 0);
+        taskCursor = db.rawQuery("select * from " + DatabaseHelper.TABLE_TASK, null);
+        String[] headers = new String[]{DatabaseHelper.COLUMN_TEXT};
+        taskAdapter = new SimpleCursorAdapter(this, R.layout.line_list_item,
+                taskCursor, headers, new int[]{R.id.text}, 0);
         taskList.setAdapter(taskAdapter);
+    }
+
+    public void addTask(View v){
+        CustomDialogFragment dialog = new CustomDialogFragment();
+        dialog.show(getSupportFragmentManager(), "custom");
     }
 
     @Override
