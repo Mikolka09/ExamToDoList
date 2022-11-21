@@ -4,41 +4,98 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/fon_1"
+    android:padding="10dp">
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:ignore="MissingConstraints"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent">
     <TextView
-        android:id="@+id/header"
-        android:layout_width="0dp"
+        android:id="@+id/text_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
-        app:layout_constraintBottom_toTopOf="@+id/listItem"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="@string/welcome_to_my_tasks"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ListView
-        android:id="@+id/listItem"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/text_1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="18dp"
+        android:gravity="center"
+        android:text="@string/enter_your_name"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header">
-    </ListView>
+        app:layout_constraintTop_toBottomOf="@+id/text_title" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:onClick="addTask"
-        app:srcCompat="@android:drawable/ic_input_add"
-        tools:ignore="MissingConstraints,UsingOnClickInXml,SpeakableTextPresentCheck"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginBottom="30dp"
-        android:layout_marginRight="30dp"/>
+        app:layout_constraintTop_toBottomOf="@+id/text_1"
+        tools:ignore="LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck"
+        android:autofillHints="20"
+        android:inputType="text" />
 
+    <TextView
+        android:id="@+id/text_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:gravity="center"
+        android:text="@string/enter_year_of_birth"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name" />
+
+    <EditText
+        android:id="@+id/year"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_2"
+        tools:ignore="LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck"
+        android:autofillHints="20"
+        android:inputType="text" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        style="@style/ButtonStyleSave"
+        android:id="@+id/enter_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/name"/>
+</LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

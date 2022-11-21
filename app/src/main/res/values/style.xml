@@ -16,4 +16,12 @@
         <item name="android:background">@color/design_default_color_error</item>
         <item name="android:gravity">center</item>
     </style>
+    <style name="ButtonStyleSave" parent="@android:style/Widget.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:text">ENTER</item>
+        <item name="android:background">@color/design_default_color_primary</item>
+        <item name="android:gravity">center</item>
+    </style>
 </resources>

@@ -13,6 +13,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_YEAR = "year";
+
     public static final String COLUMN_ID_TASK = "_id_task";
     public static final String COLUMN_TEXT = "text";
     public static final String COLUMN_ID_USER = "_id_user";
@@ -30,9 +32,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE users (" + COLUMN_ID
                 + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_NAME
-                + " TEXT);");
-        /*db.execSQL("INSERT INTO "+ TABLE +" (" + COLUMN_TEXT
-                + ", " + COLUMN_ID_USER  + ") VALUES ('Task_1', 1);");*/
+                + " TEXT, " + COLUMN_YEAR + " INTEGER);");
+
     }
 
     @Override

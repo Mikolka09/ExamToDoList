@@ -3,57 +3,71 @@ package com.example.examtodolist;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    ListView taskList;
-    TextView header;
-    DatabaseHelper databaseHelper;
-    SQLiteDatabase db;
-    Cursor taskCursor;
-    SimpleCursorAdapter taskAdapter;
+    private EditText nameBox;
+    private EditText yearBox;
+    private Button enterButton;
 
+    private DatabaseAdapter adapter;
+
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        header = findViewById(R.id.header);
-        taskList = findViewById(R.id.listItem);
+        nameBox = findViewById(R.id.name);
+        yearBox = findViewById(R.id.year);
+        enterButton = findViewById(R.id.enter_user);
+        adapter = new DatabaseAdapter(this);
 
-        databaseHelper = new DatabaseHelper(getApplicationContext());
+        enterButton.setOnClickListener(view -> enterName());
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        header.setText("TASKS");
-        db = databaseHelper.getReadableDatabase();
-
-        taskCursor = db.rawQuery("select * from " + DatabaseHelper.TABLE_TASK, null);
-        String[] headers = new String[]{DatabaseHelper.COLUMN_TEXT};
-        taskAdapter = new SimpleCursorAdapter(this, R.layout.line_list_item,
-                taskCursor, headers, new int[]{R.id.text}, 0);
-        taskList.setAdapter(taskAdapter);
+    public void enterName() {
+        String name = nameBox.getText().toString();
+        int year = Integer.parseInt(yearBox.getText().toString());
+        adapter.openBase();
+        if (adapter.getCountUser() == 0) {
+            User user = new User(1, name, year);
+            adapter.insertUser(user);
+            adapter.closeBase();
+            showToast("Users " + name + " added!");
+            startWindow(user);
+        } else {
+            if (adapter.findUser(name) != null) {
+                User user = adapter.findUser(name);
+                adapter.closeBase();
+                startWindow(user);
+            } else {
+                User user = new User(1, name, year);
+                adapter.insertUser(user);
+                adapter.closeBase();
+                showToast("Users " + name + " added!");
+                startWindow(user);
+            }
+        }
     }
 
-    public void addTask(View v){
-        CustomDialogFragment dialog = new CustomDialogFragment();
-        dialog.show(getSupportFragmentManager(), "custom");
+    public void startWindow(User user) {
+        Intent intent = new Intent(this, ListActivity.class);
+        intent.putExtra("name", user.getName());
+        intent.putExtra("year", user.getYear());
+        intent.putExtra("userId", user.getId());
+        startActivity(intent);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        db.close();
-        taskCursor.close();
+    public void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
+
 }

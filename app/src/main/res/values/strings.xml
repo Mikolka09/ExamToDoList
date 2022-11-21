@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ExamToDoList</string>
+    <string name="welcome_to_my_tasks">WELCOME TO MY TASKS</string>
+    <string name="enter_your_name">Enter Your Name</string>
+    <string name="todo">TODO</string>
+    <string name="enter_year_of_birth">Enter Year of Birth</string>
 </resources>
