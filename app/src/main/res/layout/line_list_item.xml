@@ -13,24 +13,22 @@
 
         <TextView
             android:id="@+id/text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="18dp"
-            android:layout_weight="15"/>
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"/>
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/edit"
+            android:id="@+id/edit_button"
             style="@style/ButtonStyleEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="editTask"
             />
-
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/delete"
+            android:id="@+id/delete_button"
             style="@style/ButtonStyleDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="deleteTask"
-            android:layout_marginLeft="5dp"/>
+            android:layout_marginStart="5dp"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

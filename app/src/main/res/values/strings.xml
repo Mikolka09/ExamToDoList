@@ -4,4 +4,5 @@
     <string name="enter_your_name">Enter Your Name</string>
     <string name="todo">TODO</string>
     <string name="enter_year_of_birth">Enter Year of Birth</string>
+    <string name="text">Напишите текст:</string>
 </resources>
