@@ -28,10 +28,12 @@ public class ListActivity extends AppCompatActivity {
     private ListView taskList;
     private TextView header;
     private int userId;
+    private  Bundle args;
 
     SimpleCursorAdapter arrayAdapter;
 
     private DatabaseAdapterTask adapter;
+    private DatabaseAdapterUser adapterUser;
 
     @SuppressLint({"SetTextI18n", "MissingInflatedId"})
     @Override
@@ -43,7 +45,7 @@ public class ListActivity extends AppCompatActivity {
         taskList = findViewById(R.id.listItem);
         FloatingActionButton addButton = findViewById(R.id.floatingActionButton);
 
-        Bundle args = getIntent().getExtras();
+        args = getIntent().getExtras();
         if (args != null) {
             String name = args.get("name").toString();
             int year = Integer.parseInt(args.get("year").toString());
@@ -63,6 +65,7 @@ public class ListActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         adapter = new DatabaseAdapterTask(this);
+        adapterUser = new DatabaseAdapterUser(this);
         adapter.open();
         if (adapter.getCountTask() == 0) {
             header.setText("There are no tasks!");
@@ -117,7 +120,6 @@ public class ListActivity extends AppCompatActivity {
         mDialogBuilder.setView(editDeleteUserView);
         EditText userName = editDeleteUserView.findViewById(R.id.enter_name_user);
         EditText userYear = editDeleteUserView.findViewById(R.id.enter_year_user);
-        DatabaseAdapterUser adapterUser = new DatabaseAdapterUser(this);
         adapterUser.open();
         User user = adapterUser.getUserForId(userId);
         userName.setText(user.getName());
@@ -136,13 +138,7 @@ public class ListActivity extends AppCompatActivity {
                         })
                 .setNegativeButton("Delete",
                         (dialog, id) -> {
-                            adapterUser.delete(userId);
-                            adapterUser.close();
-                            deletedAllTasks(userId);
-                            showToast("User deleted!");
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
+                            confirmAction();
                         });
         AlertDialog alertDialog = mDialogBuilder.create();
         alertDialog.show();
@@ -191,9 +187,32 @@ public class ListActivity extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
+    public void confirmAction() {
+        AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(this);
+        mDialogBuilder
+                .setTitle("Confirm Your Action")
+                .setMessage("Are you sure you want to delete the user?")
+                .setCancelable(false)
+                .setPositiveButton("Yes",
+                        (dialog, id) -> {
+                            adapterUser.delete(userId);
+                            adapterUser.close();
+                            deletedAllTasks(userId);
+                            showToast("User deleted!");
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        })
+                .setNegativeButton("No",
+                        (dialog, id) -> dialog.cancel());
+        AlertDialog alertDialog = mDialogBuilder.create();
+        alertDialog.show();
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        args = null;
         this.finish();
     }
 }

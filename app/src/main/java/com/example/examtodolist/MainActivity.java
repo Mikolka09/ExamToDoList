@@ -1,5 +1,6 @@
 package com.example.examtodolist;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -13,7 +14,6 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText nameBox;
     private EditText yearBox;
-    private Button enterButton;
     private DatabaseAdapterUser adapter;
 
 
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
         nameBox = findViewById(R.id.name);
         yearBox = findViewById(R.id.year);
-        enterButton = findViewById(R.id.enter_user);
+        Button enterButton = findViewById(R.id.enter_user);
         adapter = new DatabaseAdapterUser(this);
 
         enterButton.setOnClickListener(view -> enterName());
@@ -48,12 +48,33 @@ public class MainActivity extends AppCompatActivity {
                 startWindow(user);
             } else {
                 User user = new User(1, name, year);
-                adapter.insert(user);
-                adapter.close();
-                showToast("Users " + name + " added!");
-                startWindow(user);
+                confirmAction(user);
             }
         }
+    }
+
+    public void confirmAction(User user) {
+        AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(this);
+        mDialogBuilder
+                .setTitle("Confirm Your Action")
+                .setMessage("There is no such user! Want to create a new user or try again?")
+                .setCancelable(false)
+                .setPositiveButton("Yes",
+                        (dialog, id) -> {
+                            adapter.insert(user);
+                            User userNew = adapter.findUserForName(user.getName(), user.getYear());
+                            adapter.close();
+                            showToast("Users " + user.getName() + " added!");
+                            startWindow(userNew);
+                        })
+                .setNegativeButton("No",
+                        (dialog, id) -> {
+                            nameBox.setText("");
+                            yearBox.setText("");
+                            dialog.cancel();
+                        });
+        AlertDialog alertDialog = mDialogBuilder.create();
+        alertDialog.show();
     }
 
     public void startWindow(User user) {
