@@ -28,7 +28,9 @@ public class ListActivity extends AppCompatActivity {
     private ListView taskList;
     private TextView header;
     private int userId;
-    private  Bundle args;
+    private Bundle args;
+    private String name;
+    private int year;
 
     SimpleCursorAdapter arrayAdapter;
 
@@ -47,8 +49,8 @@ public class ListActivity extends AppCompatActivity {
 
         args = getIntent().getExtras();
         if (args != null) {
-            String name = args.get("name").toString();
-            int year = Integer.parseInt(args.get("year").toString());
+            name = args.get("name").toString();
+            year = Integer.parseInt(args.get("year").toString());
             userId = Integer.parseInt(args.get("userId").toString());
             int age = Calendar.getInstance().get(Calendar.YEAR) - year;
             header.setText("My Tasks, " + name.toUpperCase(Locale.ROOT) + ", " + age);
@@ -67,19 +69,13 @@ public class ListActivity extends AppCompatActivity {
         adapter = new DatabaseAdapterTask(this);
         adapterUser = new DatabaseAdapterUser(this);
         adapter.open();
-        if (adapter.getCountTask() == 0) {
-            header.setText("There are no tasks!");
-            header.setTextColor(Color.RED);
+        if (adapter.findUserTasks(userId).size() != 0) {
+            Cursor tasks = adapter.cursorTasks(userId);
+            String[] list = new String[]{DatabaseHelper.COLUMN_TEXT};
+            arrayAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1,
+                    tasks, list, new int[]{android.R.id.text1}, 0);
+            taskList.setAdapter(arrayAdapter);
             adapter.close();
-        } else {
-            if (adapter.findUserTasks(userId).size() != 0) {
-                Cursor tasks = adapter.cursorTasks(userId);
-                String[] list = new String[]{DatabaseHelper.COLUMN_TEXT};
-                arrayAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1,
-                        tasks, list, new int[]{android.R.id.text1}, 0);
-                taskList.setAdapter(arrayAdapter);
-                adapter.close();
-            }
         }
     }
 
@@ -145,15 +141,14 @@ public class ListActivity extends AppCompatActivity {
     }
 
     @SuppressLint("SetTextI18n")
-    public void renameHeader(String name, int year){
+    public void renameHeader(String name, int year) {
         int age = Calendar.getInstance().get(Calendar.YEAR) - year;
         header.setText("My Tasks, " + name.toUpperCase(Locale.ROOT) + ", " + age);
     }
 
     public void deletedAllTasks(long id) {
-        List<Task> taskList;
         adapter.open();
-        taskList = adapter.findUserTasks(id);
+        List<Task> taskList = adapter.findUserTasks(id);
         for (Task ts : taskList) {
             adapter.delete(ts.getId());
         }
@@ -212,7 +207,6 @@ public class ListActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        args = null;
         this.finish();
     }
 }
