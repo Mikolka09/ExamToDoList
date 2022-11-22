@@ -1,20 +1,29 @@
 package com.example.examtodolist;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import androidx.annotation.ColorInt;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -25,9 +34,8 @@ public class ListActivity extends AppCompatActivity {
     private TextView header;
     private int userId;
     private Button editButton;
-    private FloatingActionButton addButton;
 
-    ArrayAdapter<Task> arrayAdapter;
+    SimpleCursorAdapter arrayAdapter;
 
     private DatabaseAdapterTask adapter;
 
@@ -40,7 +48,7 @@ public class ListActivity extends AppCompatActivity {
         header = findViewById(R.id.header);
         taskList = findViewById(R.id.listItem);
         editButton = findViewById(R.id.edit_button);
-        addButton = findViewById(R.id.floatingActionButton);
+        FloatingActionButton addButton = findViewById(R.id.floatingActionButton);
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
@@ -50,6 +58,9 @@ public class ListActivity extends AppCompatActivity {
             int age = Calendar.getInstance().get(Calendar.YEAR) - year;
             header.setText("My Tasks, " + name.toUpperCase(Locale.ROOT) + ", " + age);
         }
+        taskList.setOnItemClickListener((parent, view, position, id) -> {
+            editForDelete(view);
+        });
         editButton.setOnClickListener(this::edit);
         addButton.setOnClickListener(this::added);
     }
@@ -64,17 +75,23 @@ public class ListActivity extends AppCompatActivity {
             header.setText("There are no tasks!");
             header.setTextColor(Color.RED);
             editButton.setVisibility(View.INVISIBLE);
-        } else {
-            List<Task> tasks = adapter.findUserTasks(userId);
-            arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, tasks);
-            taskList.setAdapter(arrayAdapter);
             adapter.close();
+        } else {
+            if (adapter.findUserTasks(userId).size() != 0) {
+                Cursor tasks = adapter.cursorTasks(userId);
+                String[] list = new String[]{DatabaseHelper.COLUMN_TEXT};
+                arrayAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1,
+                        tasks, list, new int[]{android.R.id.text1}, 0);
+                taskList.setAdapter(arrayAdapter);
+                adapter.close();
+            }
+
 
         }
 
     }
 
-    public void delete(View v) {
+    public void editForDelete(View v) {
 
     }
 
@@ -83,7 +100,25 @@ public class ListActivity extends AppCompatActivity {
     }
 
     public void added(View v) {
-
+        LayoutInflater li = LayoutInflater.from(this);
+        @SuppressLint("InflateParams") View promptsView = li.inflate(R.layout.prompt, null);
+        AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(this);
+        mDialogBuilder.setView(promptsView);
+        EditText userInput = (EditText) promptsView.findViewById(R.id.input_task);
+        adapter.open();
+        mDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        (dialog, id) -> {
+                            String text = userInput.getText().toString();
+                            adapter.insert(new Task(1, text, userId));
+                            adapter.close();
+                            this.onRestart();
+                        })
+                .setNegativeButton("Cancel",
+                        (dialog, id) -> dialog.cancel());
+        AlertDialog alertDialog = mDialogBuilder.create();
+        alertDialog.show();
     }
 
     public void showToast(String msg) {

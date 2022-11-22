@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fon_2">
+    android:background="@drawable/fon_3">
 <LinearLayout
     android:id="@+id/header_title"
     android:layout_width="match_parent"
@@ -17,7 +17,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="26sp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:gravity="center"
         android:textStyle="bold"
         android:layout_weight="1"

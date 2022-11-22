@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
             showToast("Users " + name + " added!");
             startWindow(user);
         } else {
-            if (adapter.findUserForName(name) != null) {
-                User user = adapter.findUserForName(name);
+            if (adapter.findUserForName(name, year) != null) {
+                User user = adapter.findUserForName(name, year);
                 adapter.close();
                 startWindow(user);
             } else {

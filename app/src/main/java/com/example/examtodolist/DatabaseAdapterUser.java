@@ -71,14 +71,13 @@ public class DatabaseAdapterUser {
         return user;
     }
 
-    public User findUserForName(String name) {
+    public User findUserForName(String name, int year) {
         User user = null;
-        String query = String.format("SELECT * FROM %s WHERE %s = ?", DatabaseHelper.TABLE_USER,
-                DatabaseHelper.COLUMN_NAME.toUpperCase(Locale.ROOT));
-        Cursor cursor = sqLiteDatabase.rawQuery(query, new String[]{name.toUpperCase(Locale.ROOT)});
+        String query = String.format("SELECT * FROM %s WHERE %s = ? AND %s = ?", DatabaseHelper.TABLE_USER,
+                DatabaseHelper.COLUMN_NAME, DatabaseHelper.COLUMN_YEAR);
+        Cursor cursor = sqLiteDatabase.rawQuery(query, new String[]{name, String.valueOf(year)});
         if (cursor.moveToFirst()) {
             @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID));
-            @SuppressLint("Range") int year = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_YEAR));
             user = new User(id, name, year);
         }
         cursor.close();

@@ -73,6 +73,15 @@ public class DatabaseAdapterTask {
         return tasks;
     }
 
+    public Cursor cursorTasks(long idUser) {
+        String query = String.format("SELECT * FROM %s WHERE %s = ?", DatabaseHelper.TABLE_TASK, DatabaseHelper.COLUMN_ID_USER);
+        Cursor cursor = sqLiteDatabase.rawQuery(query, new String[]{String.valueOf(idUser)});
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
+
     public Task getTask(long id) {
         Task task = null;
         String query = String.format("SELECT * FROM %s WHERE %s = ?", DatabaseHelper.TABLE_TASK, DatabaseHelper.COLUMN_ID_TASK);
