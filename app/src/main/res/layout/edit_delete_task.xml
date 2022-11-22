@@ -9,16 +9,16 @@
     android:padding="10dp" >
 
     <TextView
-        android:id="@+id/tv"
+        android:id="@+id/tv_task"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textStyle="bold"
-        android:text="@string/text"
+        android:text="@string/edit_or_delete_task"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
-        android:id="@+id/input_task"
+        android:id="@+id/enter_task"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"

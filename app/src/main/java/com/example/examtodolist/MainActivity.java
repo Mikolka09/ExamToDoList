@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startWindow(User user) {
+        nameBox.setText("");
+        yearBox.setText("");
         Intent intent = new Intent(getApplicationContext(), ListActivity.class);
         intent.putExtra("name", user.getName());
         intent.putExtra("year", user.getYear());

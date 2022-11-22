@@ -5,4 +5,6 @@
     <string name="todo">TODO</string>
     <string name="enter_year_of_birth">Enter Year of Birth</string>
     <string name="text">Write the new task</string>
+    <string name="edit_or_delete_task">Edit or Delete Task</string>
+    <string name="edit_or_delete_user">Edit or Delete User</string>
 </resources>

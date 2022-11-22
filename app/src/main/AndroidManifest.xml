@@ -27,7 +27,8 @@
         </activity>
         <activity
             android:name=".ListActivity"
-            android:label="ListActivity">
+            android:label="ListActivity"
+            android:noHistory="true">
         </activity>
     </application>
 
