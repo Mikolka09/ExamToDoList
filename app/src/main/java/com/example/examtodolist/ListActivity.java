@@ -3,11 +3,10 @@ package com.example.examtodolist;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -28,9 +27,6 @@ public class ListActivity extends AppCompatActivity {
     private ListView taskList;
     private TextView header;
     private int userId;
-    private Bundle args;
-    private String name;
-    private int year;
 
     SimpleCursorAdapter arrayAdapter;
 
@@ -47,17 +43,17 @@ public class ListActivity extends AppCompatActivity {
         taskList = findViewById(R.id.listItem);
         FloatingActionButton addButton = findViewById(R.id.floatingActionButton);
 
-        args = getIntent().getExtras();
+        Bundle args = getIntent().getExtras();
         if (args != null) {
-            name = args.get("name").toString();
-            year = Integer.parseInt(args.get("year").toString());
+            String name = args.get("name").toString();
+            int year = Integer.parseInt(args.get("year").toString());
             userId = Integer.parseInt(args.get("userId").toString());
             int age = Calendar.getInstance().get(Calendar.YEAR) - year;
-            header.setText("My Tasks, " + name.toUpperCase(Locale.ROOT) + ", " + age);
+            String htmlTaggedString  = String.format("<u>My Tasks (%s, %s)</u>",name.toUpperCase(Locale.ROOT), age);
+            Spanned textSpan  =  android.text.Html.fromHtml(htmlTaggedString);
+            header.setText(textSpan);
         }
-        taskList.setOnItemClickListener((parent, view, position, id) -> {
-            editForDelete(id);
-        });
+        taskList.setOnItemClickListener((parent, view, position, id) -> editForDelete(id));
         header.setOnClickListener(this::edit);
         addButton.setOnClickListener(this::added);
     }
@@ -66,6 +62,10 @@ public class ListActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        dataOutput();
+    }
+
+    public void dataOutput(){
         adapter = new DatabaseAdapterTask(this);
         adapterUser = new DatabaseAdapterUser(this);
         adapter.open();
@@ -76,6 +76,8 @@ public class ListActivity extends AppCompatActivity {
                     tasks, list, new int[]{android.R.id.text1}, 0);
             taskList.setAdapter(arrayAdapter);
             adapter.close();
+        }else{
+            taskList.setAdapter(null);
         }
     }
 
@@ -96,14 +98,14 @@ public class ListActivity extends AppCompatActivity {
                             adapter.update(new Task(idTask, text, userId));
                             adapter.close();
                             showToast("Task edited!");
-                            this.onResume();
+                            dataOutput();
                         })
                 .setNegativeButton("Delete",
                         (dialog, id) -> {
                             adapter.delete(idTask);
                             adapter.close();
                             showToast("Task deleted!");
-                            this.onResume();
+                            dataOutput();
                         });
         AlertDialog alertDialog = mDialogBuilder.create();
         alertDialog.show();
@@ -130,12 +132,10 @@ public class ListActivity extends AppCompatActivity {
                             adapterUser.close();
                             renameHeader(name, year);
                             showToast("User edited!");
-                            this.onResume();
+                            dataOutput();
                         })
                 .setNegativeButton("Delete",
-                        (dialog, id) -> {
-                            confirmAction();
-                        });
+                        (dialog, id) -> confirmAction());
         AlertDialog alertDialog = mDialogBuilder.create();
         alertDialog.show();
     }
@@ -143,14 +143,20 @@ public class ListActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     public void renameHeader(String name, int year) {
         int age = Calendar.getInstance().get(Calendar.YEAR) - year;
-        header.setText("My Tasks, " + name.toUpperCase(Locale.ROOT) + ", " + age);
+        String htmlTaggedString  = String.format("<u>My Tasks (%s, %s)</u>",name.toUpperCase(Locale.ROOT), age);
+        Spanned textSpan  =  android.text.Html.fromHtml(htmlTaggedString);
+        header.setText(textSpan);
     }
 
     public void deletedAllTasks(long id) {
         adapter.open();
         List<Task> taskList = adapter.findUserTasks(id);
-        for (Task ts : taskList) {
-            adapter.delete(ts.getId());
+        if(taskList.size()!=0) {
+            for (Task ts : taskList) {
+                adapter.delete(ts.getId());
+            }
+            adapter.close();
+            deletedAllTasks(userId);
         }
         adapter.close();
     }
@@ -170,7 +176,7 @@ public class ListActivity extends AppCompatActivity {
                             adapter.insert(new Task(1, text, userId));
                             adapter.close();
                             showToast("New Task added!");
-                            this.onResume();
+                            dataOutput();
                         })
                 .setNegativeButton("Cancel",
                         (dialog, id) -> dialog.cancel());
@@ -195,18 +201,15 @@ public class ListActivity extends AppCompatActivity {
                             deletedAllTasks(userId);
                             showToast("User deleted!");
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                    Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                             startActivity(intent);
+                            finish();
                         })
                 .setNegativeButton("No",
                         (dialog, id) -> dialog.cancel());
         AlertDialog alertDialog = mDialogBuilder.create();
         alertDialog.show();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        this.finish();
     }
 }

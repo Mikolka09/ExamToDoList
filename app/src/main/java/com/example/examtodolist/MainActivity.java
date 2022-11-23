@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
                         })
                 .setNegativeButton("No",
                         (dialog, id) -> {
-                            nameBox.setText("");
                             yearBox.setText("");
+                            nameBox.setText("");
                             dialog.cancel();
                         });
         AlertDialog alertDialog = mDialogBuilder.create();
@@ -78,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startWindow(User user) {
-        nameBox.setText("");
         yearBox.setText("");
+        nameBox.setText("");
         Intent intent = new Intent(getApplicationContext(), ListActivity.class);
         intent.putExtra("name", user.getName());
         intent.putExtra("year", user.getYear());
